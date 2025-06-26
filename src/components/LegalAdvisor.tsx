@@ -6,30 +6,56 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Scale, Send, FileText, AlertCircle } from "lucide-react";
+import { Scale, Send, FileText, AlertCircle, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const LegalAdvisor = () => {
   const [question, setQuestion] = useState('');
   const [category, setCategory] = useState('');
+  const [language, setLanguage] = useState('');
+  const [webhookUrl, setWebhookUrl] = useState('');
   const [conversation, setConversation] = useState<Array<{type: 'user' | 'advisor', message: string}>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const legalCategories = [
-    "Prawo imigracyjne",
     "Prawo pracy",
-    "Prawo mieszkaniowe", 
-    "Prawo biznesowe",
+    "Umowy B2B/B2C",
+    "Prawo podatkowe", 
+    "Spółki i start-upy",
+    "Nieruchomości",
     "Prawo rodzinne",
-    "Prawo spadkowe",
-    "Prawo podatkowe",
-    "Inne"
+    "Spadki",
+    "Prawo konsumenckie",
+    "RODO / dane osobowe",
+    "Mandaty i wykroczenia"
+  ];
+
+  const languages = [
+    "Polski",
+    "Turecki", 
+    "Bułgarski",
+    "Angielski",
+    "Hiszpański",
+    "Rumuński",
+    "Holenderski",
+    "Węgierski",
+    "Litewski",
+    "Ukraiński",
+    "Francuski",
+    "Włoski"
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!question.trim()) return;
+    if (!question.trim() || !category) {
+      toast({
+        title: "Błąd",
+        description: "Wypełnij wszystkie wymagane pola",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsLoading(true);
     const userMessage = question;
@@ -38,17 +64,53 @@ const LegalAdvisor = () => {
     // Add user message to conversation
     setConversation(prev => [...prev, { type: 'user', message: userMessage }]);
 
-    // Simulate AI response (tutaj będzie Twój prompt)
-    setTimeout(() => {
-      const response = generateLegalAdvice(userMessage, category);
-      setConversation(prev => [...prev, { type: 'advisor', message: response }]);
+    // Prepare data for webhook
+    const webhookData = {
+      question: userMessage,
+      category: category,
+      language: language || "Polski",
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      // Send to webhook if URL is provided
+      if (webhookUrl) {
+        console.log("Sending to webhook:", webhookData);
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'no-cors',
+          body: JSON.stringify(webhookData),
+        });
+
+        toast({
+          title: "Wysłano zapytanie",
+          description: "Twoje pytanie zostało przekazane do systemu prawniczego",
+        });
+      }
+
+      // Simulate AI response
+      setTimeout(() => {
+        const response = generateLegalAdvice(userMessage, category, language || "Polski");
+        setConversation(prev => [...prev, { type: 'advisor', message: response }]);
+        setIsLoading(false);
+      }, 1500);
+
+    } catch (error) {
+      console.error("Błąd wysyłania:", error);
+      toast({
+        title: "Błąd",
+        description: "Nie udało się wysłać zapytania",
+        variant: "destructive",
+      });
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
-  const generateLegalAdvice = (question: string, category: string) => {
-    // Tutaj będzie implementacja Twojego promptu AI
-    return `Jako doradca prawny specjalizujący się w prawie holenderskim, w kategorii "${category}", analizuję Twoją sytuację:
+  const generateLegalAdvice = (question: string, category: string, language: string) => {
+    return `Jako doradca prawny specjalizujący się w prawie holenderskim, w kategorii "${category}", analizuję Twoją sytuację w języku ${language}:
 
 ${question}
 
@@ -70,25 +132,61 @@ Na podstawie aktualnego prawa holenderskiego, oto moja analiza:
 
   return (
     <div className="space-y-6">
-      {/* Category Selection */}
+      {/* Configuration */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Scale className="w-5 h-5 text-blue-600" />
-            <span>Wybierz kategorię prawną</span>
+            <span>Konfiguracja doradcy prawnego</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger>
-              <SelectValue placeholder="Wybierz obszar prawa" />
-            </SelectTrigger>
-            <SelectContent>
-              {legalCategories.map((cat) => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <CardContent className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Webhook URL (n8n)</label>
+            <Input
+              placeholder="Wprowadź URL webhook n8n..."
+              value={webhookUrl}
+              onChange={(e) => setWebhookUrl(e.target.value)}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Category and Language Selection */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Globe className="w-5 h-5 text-blue-600" />
+            <span>Wybierz kategorię i język</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Kategoria sprawy *</label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Wybierz kategorię sprawy" />
+              </SelectTrigger>
+              <SelectContent>
+                {legalCategories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Język</label>
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger>
+                <SelectValue placeholder="Wybierz język" />
+              </SelectTrigger>
+              <SelectContent>
+                {languages.map((lang) => (
+                  <SelectItem key={lang} value={lang}>{lang}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </CardContent>
       </Card>
 
@@ -135,13 +233,17 @@ Na podstawie aktualnego prawa holenderskiego, oto moja analiza:
       <Card>
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Textarea
-              placeholder="Opisz swoją sytuację prawną lub zadaj pytanie..."
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              rows={3}
-              className="resize-none"
-            />
+            <div>
+              <label className="block text-sm font-medium mb-2">Twoje pytanie prawne *</label>
+              <Textarea
+                placeholder="Opisz swoją sytuację prawną lub zadaj pytanie..."
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                rows={4}
+                className="resize-none"
+                required
+              />
+            </div>
             <div className="flex justify-between items-center">
               <Badge variant="outline" className="text-orange-700 border-orange-700">
                 <AlertCircle className="w-3 h-3 mr-1" />
@@ -149,11 +251,11 @@ Na podstawie aktualnego prawa holenderskiego, oto moja analiza:
               </Badge>
               <Button 
                 type="submit" 
-                disabled={!question.trim() || isLoading}
+                disabled={!question.trim() || !category || isLoading}
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 <Send className="w-4 h-4 mr-2" />
-                Wyślij pytanie
+                Rozpocznij rozmowę
               </Button>
             </div>
           </form>

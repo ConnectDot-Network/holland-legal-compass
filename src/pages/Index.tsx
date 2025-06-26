@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Scale, MessageSquare, Phone, Briefcase, Languages, Users, MapPin, Clock } from "lucide-react";
+import { Scale, MessageSquare, Phone, Briefcase, Languages, Users, MapPin, Clock, User } from "lucide-react";
 import LegalAdvisor from "@/components/LegalAdvisor";
 import TranslatorAssistant from "@/components/TranslatorAssistant";
 import Receptionist from "@/components/Receptionist";
@@ -20,7 +20,7 @@ const Index = () => {
       description: "Specjalista od prawa holenderskiego",
       icon: Scale,
       color: "bg-blue-600",
-      features: ["Prawo imigracyjne", "Prawo pracy", "Prawo mieszkaniowe", "Prawo biznesowe"]
+      features: ["Prawo pracy", "Umowy B2B/B2C", "Prawo podatkowe", "Spółki i start-upy"]
     },
     {
       id: "translator",
@@ -28,7 +28,7 @@ const Index = () => {
       description: "Profesjonalne tłumaczenia prawnicze",
       icon: Languages,
       color: "bg-orange-600",
-      features: ["Dokumenty urzędowe", "Umowy", "Korespondencja", "Certyfikowane tłumaczenia"]
+      features: ["Dokumenty urzędowe", "Umowy", "Korespondencja", "Upload dokumentów"]
     },
     {
       id: "receptionist",
@@ -183,6 +183,21 @@ const Index = () => {
                     <Scale className="w-8 h-8 mx-auto mb-2" />
                     <h3 className="font-bold text-lg">Prawo Holenderskie</h3>
                     <p className="text-blue-100">Aktualna wiedza prawnicza</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Author Section */}
+            <Card className="mt-8">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center space-x-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-orange-600 rounded-full flex items-center justify-center">
+                    <User className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="text-center">
+                    <h3 className="text-lg font-bold text-gray-900">Stworzono przez prawników dla prawników</h3>
+                    <p className="text-gray-600">Holland Legal Compass - Twój przewodnik po holenderskim prawie</p>
                   </div>
                 </div>
               </CardContent>
