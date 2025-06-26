@@ -3,8 +3,11 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Scale, MessageSquare, Phone, Briefcase, Languages, Users, MapPin, Clock, User } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Scale, MessageSquare, Phone, Briefcase, Languages, Users, MapPin, Clock, User, Moon, Sun, Globe } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import LegalAdvisor from "@/components/LegalAdvisor";
 import TranslatorAssistant from "@/components/TranslatorAssistant";
 import Receptionist from "@/components/Receptionist";
@@ -12,38 +15,55 @@ import BusinessAdvisor from "@/components/BusinessAdvisor";
 
 const Index = () => {
   const [activeService, setActiveService] = useState<string | null>(null);
+  const { language, setLanguage, t } = useLanguage();
+  const { isDark, toggleTheme } = useTheme();
+
+  const languages = [
+    { code: 'pl', name: 'Polski' },
+    { code: 'en', name: 'English' },
+    { code: 'nl', name: 'Nederlands' },
+    { code: 'tr', name: 'Türkçe' },
+    { code: 'bg', name: 'Български' },
+    { code: 'es', name: 'Español' },
+    { code: 'ro', name: 'Română' },
+    { code: 'hu', name: 'Magyar' },
+    { code: 'lt', name: 'Lietuvių' },
+    { code: 'uk', name: 'Українська' },
+    { code: 'fr', name: 'Français' },
+    { code: 'it', name: 'Italiano' }
+  ];
 
   const services = [
     {
       id: "legal",
-      title: "Doradca Prawny",
+      title: t("legalAdvisor"),
       description: "Specjalista od prawa holenderskiego",
       icon: Scale,
-      color: "bg-blue-600",
+      color: "bg-blue-600 dark:bg-blue-500",
       features: ["Prawo pracy", "Umowy B2B/B2C", "Prawo podatkowe", "Spółki i start-upy"]
     },
     {
       id: "translator",
-      title: "Tłumacz-Asystent",
+      title: t("translator"),
       description: "Profesjonalne tłumaczenia prawnicze",
       icon: Languages,
-      color: "bg-orange-600",
+      color: "bg-orange-600 dark:bg-orange-500",
       features: ["Dokumenty urzędowe", "Umowy", "Korespondencja", "Upload dokumentów"]
     },
     {
       id: "receptionist",
-      title: "Telefonista",
+      title: t("receptionist"),
       description: "Zarządzanie kontaktami i rozmowami",
       icon: Phone,
-      color: "bg-green-600",
+      color: "bg-green-600 dark:bg-green-500",
       features: ["Umówienie wizyt", "Informacje ogólne", "Przekierowanie połączeń", "Obsługa klientów"]
     },
     {
       id: "business",
-      title: "Doradca Biznesowy",
+      title: t("businessAdvisor"),
       description: "Wsparcie w prowadzeniu biznesu w Holandii",
       icon: Briefcase,
-      color: "bg-purple-600",
+      color: "bg-purple-600 dark:bg-purple-500",
       features: ["Zakładanie firmy", "Podatki", "Regulacje", "Rozwój biznesu"]
     }
   ];
@@ -64,28 +84,58 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-orange-600 rounded-lg flex items-center justify-center">
-                <Scale className="w-6 h-6 text-white" />
-              </div>
+              <img 
+                src="/lovable-uploads/55a07de1-88ca-4dc6-a55f-9722a53173d8.png" 
+                alt="ConnectDot.Network Logo" 
+                className="w-12 h-12 rounded-lg"
+              />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Holland Legal Compass</h1>
-                <p className="text-sm text-gray-600">Kompleksowe wsparcie prawne w Holandii</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("appTitle")}</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{t("appDescription")}</p>
+                <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                  {t("companyName")} - {t("companyLocation")}
+                </p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant="outline" className="text-green-700 border-green-700">
+              {/* Language Selector */}
+              <Select value={language} onValueChange={(value: any) => setLanguage(value)}>
+                <SelectTrigger className="w-32">
+                  <Globe className="w-4 h-4 mr-2" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {languages.map((lang) => (
+                    <SelectItem key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Theme Toggle */}
+              <div className="flex items-center space-x-2">
+                <Sun className="w-4 h-4" />
+                <Switch
+                  checked={isDark}
+                  onCheckedChange={toggleTheme}
+                />
+                <Moon className="w-4 h-4" />
+              </div>
+
+              <Badge variant="outline" className="text-green-700 border-green-700 dark:text-green-400 dark:border-green-400">
                 <Clock className="w-3 h-3 mr-1" />
-                24/7 Dostępny
+                {t("available247")}
               </Badge>
-              <Badge variant="outline" className="text-blue-700 border-blue-700">
+              <Badge variant="outline" className="text-blue-700 border-blue-700 dark:text-blue-400 dark:border-blue-400">
                 <MapPin className="w-3 h-3 mr-1" />
-                Holandia
+                {t("location")}
               </Badge>
             </div>
           </div>
@@ -96,15 +146,15 @@ const Index = () => {
         {activeService ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-3xl font-bold text-gray-900">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
                 {services.find(s => s.id === activeService)?.title}
               </h2>
               <Button 
                 variant="outline" 
                 onClick={() => setActiveService(null)}
-                className="hover:bg-gray-50"
+                className="hover:bg-gray-50 dark:hover:bg-gray-700"
               >
-                ← Powrót do usług
+                ← {t("backToServices")}
               </Button>
             </div>
             {renderServiceComponent()}
@@ -113,12 +163,11 @@ const Index = () => {
           <>
             {/* Hero Section */}
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Profesjonalne Wsparcie Prawne w Holandii
+              <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                {t("heroTitle")}
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Kompleksowe usługi prawnicze, tłumaczeniowe i biznesowe dla osób mieszkających 
-                i prowadzących działalność w Holandii. Nasze AI-powered doradcy są dostępni 24/7.
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                {t("heroDescription")}
               </p>
             </div>
 
@@ -129,7 +178,7 @@ const Index = () => {
                 return (
                   <Card 
                     key={service.id} 
-                    className="hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer border-2 hover:border-blue-200"
+                    className="hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer border-2 hover:border-blue-200 dark:hover:border-blue-400 dark:bg-gray-800"
                     onClick={() => setActiveService(service.id)}
                   >
                     <CardHeader>
@@ -138,8 +187,8 @@ const Index = () => {
                           <IconComponent className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                          <CardTitle className="text-xl">{service.title}</CardTitle>
-                          <CardDescription className="text-gray-600">
+                          <CardTitle className="text-xl dark:text-white">{service.title}</CardTitle>
+                          <CardDescription className="text-gray-600 dark:text-gray-300">
                             {service.description}
                           </CardDescription>
                         </div>
@@ -147,7 +196,7 @@ const Index = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        <p className="font-medium text-gray-700">Specjalizacje:</p>
+                        <p className="font-medium text-gray-700 dark:text-gray-300">Specjalizacje:</p>
                         <div className="flex flex-wrap gap-2">
                           {service.features.map((feature, index) => (
                             <Badge key={index} variant="secondary" className="text-xs">
@@ -157,7 +206,7 @@ const Index = () => {
                         </div>
                       </div>
                       <Button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700">
-                        Rozpocznij rozmowę
+                        {t("startConversation")}
                       </Button>
                     </CardContent>
                   </Card>
@@ -176,7 +225,7 @@ const Index = () => {
                   </div>
                   <div>
                     <Clock className="w-8 h-8 mx-auto mb-2" />
-                    <h3 className="font-bold text-lg">24/7 Dostępność</h3>
+                    <h3 className="font-bold text-lg">{t("available247")}</h3>
                     <p className="text-blue-100">Wsparcie przez cały rok</p>
                   </div>
                   <div>
@@ -188,16 +237,19 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            {/* Author Section */}
-            <Card className="mt-8">
+            {/* Company Section */}
+            <Card className="mt-8 dark:bg-gray-800">
               <CardContent className="p-6">
                 <div className="flex items-center justify-center space-x-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-orange-600 rounded-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-white" />
-                  </div>
+                  <img 
+                    src="/lovable-uploads/55a07de1-88ca-4dc6-a55f-9722a53173d8.png" 
+                    alt="ConnectDot.Network Logo" 
+                    className="w-16 h-16 rounded-full"
+                  />
                   <div className="text-center">
-                    <h3 className="text-lg font-bold text-gray-900">Stworzono przez prawników dla prawników</h3>
-                    <p className="text-gray-600">Holland Legal Compass - Twój przewodnik po holenderskim prawie</p>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("companyName")}</h3>
+                    <p className="text-gray-600 dark:text-gray-300">{t("companyLocation")}</p>
+                    <p className="text-sm text-blue-600 dark:text-blue-400">AUTOMATION • AI • COPILOT</p>
                   </div>
                 </div>
               </CardContent>
