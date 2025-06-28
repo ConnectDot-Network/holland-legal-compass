@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, File, Image, X, Camera } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { FileAttachment } from "@/types/legal";
+import { validateFile, logSecurityEvent } from "@/utils/security";
 
 interface FileUploadProps {
   attachments: FileAttachment[];
@@ -18,45 +18,47 @@ export const FileUpload = ({ attachments, onAttachmentsChange }: FileUploadProps
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const allowedTypes = [
-    'application/pdf',
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'image/webp',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'text/plain'
-  ];
-
-  const maxFileSize = 10 * 1024 * 1024; // 10MB
-
-  const validateFile = (file: File): boolean => {
-    if (!allowedTypes.includes(file.type)) {
-      toast({
-        title: "Nieprawidłowy typ pliku",
-        description: "Dozwolone są tylko pliki PDF, obrazy, dokumenty Word i pliki tekstowe",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    if (file.size > maxFileSize) {
-      toast({
-        title: "Plik za duży",
-        description: "Maksymalny rozmiar pliku to 10MB",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    return true;
-  };
-
   const handleFiles = (files: FileList) => {
-    const validFiles = Array.from(files).filter(validateFile);
+    const fileArray = Array.from(files);
+    const validFiles: File[] = [];
+    const errors: string[] = [];
+
+    // Validate each file
+    fileArray.forEach(file => {
+      const validation = validateFile(file);
+      if (validation.isValid) {
+        validFiles.push(file);
+      } else {
+        errors.push(`${file.name}: ${validation.error}`);
+        logSecurityEvent('FILE_VALIDATION_FAILED', {
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          error: validation.error
+        });
+      }
+    });
+
+    // Show errors if any
+    if (errors.length > 0) {
+      toast({
+        title: "Błędy walidacji plików",
+        description: errors.join(', '),
+        variant: "destructive",
+      });
+    }
     
     if (validFiles.length === 0) return;
+
+    // Check total attachments limit
+    if (attachments.length + validFiles.length > 10) {
+      toast({
+        title: "Za dużo plików",
+        description: "Maksymalnie 10 plików na raz",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const newAttachments: FileAttachment[] = validFiles.map(file => ({
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -72,6 +74,11 @@ export const FileUpload = ({ attachments, onAttachmentsChange }: FileUploadProps
     toast({
       title: "Pliki dodane",
       description: `Dodano ${validFiles.length} plik(ów)`,
+    });
+
+    logSecurityEvent('FILES_UPLOADED', {
+      count: validFiles.length,
+      totalSize: validFiles.reduce((sum, file) => sum + file.size, 0)
     });
   };
 
@@ -98,9 +105,17 @@ export const FileUpload = ({ attachments, onAttachmentsChange }: FileUploadProps
     if (e.target.files) {
       handleFiles(e.target.files);
     }
+    // Reset input value to allow selecting the same file again
+    e.target.value = '';
   };
 
   const removeAttachment = (id: string) => {
+    const attachment = attachments.find(att => att.id === id);
+    if (attachment) {
+      // Revoke object URL to prevent memory leaks
+      URL.revokeObjectURL(attachment.url);
+    }
+    
     const updatedAttachments = attachments.filter(att => att.id !== id);
     onAttachmentsChange(updatedAttachments);
     
@@ -150,7 +165,7 @@ export const FileUpload = ({ attachments, onAttachmentsChange }: FileUploadProps
             Przeciągnij pliki tutaj lub kliknij aby wybrać
           </p>
           <p className="text-xs text-gray-500 mb-4">
-            PDF, obrazy, dokumenty Word (max 10MB)
+            PDF, obrazy, dokumenty Word (max 10MB, max 10 plików)
           </p>
           <div className="flex gap-2 justify-center">
             <Button 
@@ -193,7 +208,7 @@ export const FileUpload = ({ attachments, onAttachmentsChange }: FileUploadProps
         {/* Attachments List */}
         {attachments.length > 0 && (
           <div className="space-y-2">
-            <h4 className="font-medium text-sm">Załączone pliki:</h4>
+            <h4 className="font-medium text-sm">Załączone pliki ({attachments.length}/10):</h4>
             {attachments.map((attachment) => (
               <div key={attachment.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                 <div className="flex items-center space-x-2">
