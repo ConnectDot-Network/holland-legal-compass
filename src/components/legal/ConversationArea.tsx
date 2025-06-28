@@ -1,8 +1,10 @@
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Scale, FileText, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { MessageSquare, Trash2, Printer, User, Bot, File, Image } from "lucide-react";
 import { ConversationMessage } from "@/types/legal";
 import { printConversation } from "@/utils/conversationPrinter";
 
@@ -19,73 +21,139 @@ export const ConversationArea = ({
   isLoading, 
   onClearConversation 
 }: ConversationAreaProps) => {
-  const handlePrintConversation = () => {
-    printConversation(conversation, category);
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('pl-PL', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
   };
 
+  const getFileIcon = (type: string) => {
+    if (type.startsWith('image/')) {
+      return <Image className="w-3 h-3" />;
+    }
+    return <File className="w-3 h-3" />;
+  };
+
+  if (conversation.length === 0 && !isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-12 text-center">
+          <MessageSquare className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+          <h3 className="text-lg font-medium text-gray-700 mb-2">
+            Gotowy do pomocy prawnej
+          </h3>
+          <p className="text-gray-500">
+            {category 
+              ? `Wybrano kategorię: ${category}. Zadaj pytanie aby rozpocząć rozmowę.`
+              : "Wybierz kategorię sprawy i zadaj pytanie aby rozpocząć rozmowę."
+            }
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="min-h-[400px]">
+    <Card>
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle>Rozmowa z doradcą prawnym</CardTitle>
+          <CardTitle className="flex items-center space-x-2">
+            <MessageSquare className="w-5 h-5 text-blue-600" />
+            <span>Rozmowa prawna</span>
+            {category && (
+              <Badge variant="outline" className="text-blue-700 border-blue-700">
+                {category}
+              </Badge>
+            )}
+          </CardTitle>
           {conversation.length > 0 && (
             <div className="flex space-x-2">
               <Button
-                onClick={handlePrintConversation}
                 variant="outline"
                 size="sm"
-                className="flex items-center space-x-1"
+                onClick={() => printConversation(conversation, category)}
               >
-                <FileText className="w-4 h-4" />
-                <span>Drukuj</span>
+                <Printer className="w-4 h-4 mr-2" />
+                Drukuj
               </Button>
               <Button
-                onClick={onClearConversation}
                 variant="outline"
                 size="sm"
-                className="flex items-center space-x-1 text-red-600 hover:text-red-700"
+                onClick={onClearConversation}
+                className="text-red-600 hover:text-red-700"
               >
-                <Trash2 className="w-4 h-4" />
-                <span>Wyczyść</span>
+                <Trash2 className="w-4 h-4 mr-2" />
+                Wyczyść
               </Button>
             </div>
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {conversation.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <Scale className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <p>Zadaj swoje pytanie prawne, aby rozpocząć konsultację</p>
-          </div>
-        ) : (
-          <div className="space-y-4 max-h-80 overflow-y-auto">
-            {conversation.map((msg, index) => (
-              <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] p-3 rounded-lg ${
-                  msg.type === 'user' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-100 text-gray-900'
-                }`}>
-                  <div className="whitespace-pre-wrap">{msg.message}</div>
-                  <div className={`text-xs mt-2 ${msg.type === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
-                    {msg.timestamp.toLocaleString('pl-PL')}
+      <CardContent>
+        <ScrollArea className="h-96 w-full">
+          <div className="space-y-4 pr-4">
+            {conversation.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] p-3 rounded-lg ${
+                    message.type === 'user'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-900'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2 mb-1">
+                    {message.type === 'user' ? (
+                      <User className="w-4 h-4" />
+                    ) : (
+                      <Bot className="w-4 h-4" />
+                    )}
+                    <span className="text-sm font-medium">
+                      {message.type === 'user' ? 'Ty' : 'Doradca Prawny'}
+                    </span>
+                    <span className="text-xs opacity-75">
+                      {formatTime(message.timestamp)}
+                    </span>
                   </div>
+                  <p className="text-sm whitespace-pre-wrap">{message.message}</p>
+                  
+                  {/* Display attachments if any */}
+                  {message.attachments && message.attachments.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      <p className="text-xs opacity-75">Załączniki:</p>
+                      {message.attachments.map((attachment) => (
+                        <div key={attachment.id} className="flex items-center space-x-1 text-xs">
+                          {getFileIcon(attachment.type)}
+                          <span>{attachment.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
+            
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 p-3 rounded-lg">
+                <div className="bg-gray-100 text-gray-900 p-3 rounded-lg">
                   <div className="flex items-center space-x-2">
-                    <div className="animate-spin w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
-                    <span>Doradca analizuje Twoją sprawę...</span>
+                    <Bot className="w-4 h-4" />
+                    <span className="text-sm font-medium">Doradca Prawny</span>
+                  </div>
+                  <div className="flex items-center space-x-1 mt-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    <span className="text-xs text-gray-500 ml-2">Analizuję sprawę...</span>
                   </div>
                 </div>
               </div>
             )}
           </div>
-        )}
+        </ScrollArea>
       </CardContent>
     </Card>
   );

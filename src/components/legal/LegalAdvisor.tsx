@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { validateWebhookUrl, sanitizeInput, isValidCategory, isValidLanguage } from "@/utils/security";
 import { generateLegalAdvice } from "@/utils/legalAdviceGenerator";
-import { ConversationMessage, legalCategories, languages } from "@/types/legal";
+import { ConversationMessage, FileAttachment, legalCategories, languages } from "@/types/legal";
 import { SecurityNotice } from "./SecurityNotice";
 import { WebhookConfig } from "./WebhookConfig";
 import { CategoryLanguageSelector } from "./CategoryLanguageSelector";
 import { ConversationArea } from "./ConversationArea";
 import { QuestionForm } from "./QuestionForm";
+import { FileUpload } from "./FileUpload";
 import { LegalResources } from "./LegalResources";
 
 const LegalAdvisor = () => {
@@ -18,6 +19,7 @@ const LegalAdvisor = () => {
   const [webhookUrl, setWebhookUrl] = useState('');
   const [webhookError, setWebhookError] = useState('');
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
+  const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -84,9 +86,13 @@ const LegalAdvisor = () => {
     const newMessage: ConversationMessage = { 
       type: 'user', 
       message: sanitizedQuestion, 
-      timestamp: new Date() 
+      timestamp: new Date(),
+      attachments: attachments.length > 0 ? [...attachments] : undefined
     };
     setConversation(prev => [...prev, newMessage]);
+    
+    // Clear attachments after sending
+    setAttachments([]);
 
     try {
       // Send to webhook if URL is provided and valid
@@ -95,6 +101,11 @@ const LegalAdvisor = () => {
           question: sanitizedQuestion,
           category: category,
           language: selectedLanguage,
+          attachments: attachments.map(att => ({
+            name: att.name,
+            type: att.type,
+            size: att.size
+          })),
           timestamp: new Date().toISOString()
         };
 
@@ -109,7 +120,7 @@ const LegalAdvisor = () => {
 
         toast({
           title: "Wysłano zapytanie",
-          description: "Twoje pytanie zostało przekazane do systemu prawniczego",
+          description: "Twoje pytanie i załączniki zostały przekazane do systemu prawniczego",
         });
       }
 
@@ -138,6 +149,7 @@ const LegalAdvisor = () => {
 
   const clearConversation = () => {
     setConversation([]);
+    setAttachments([]);
     toast({
       title: "Wyczyszczono",
       description: "Historia rozmowy została usunięta",
@@ -159,6 +171,11 @@ const LegalAdvisor = () => {
         language={language}
         onCategoryChange={setCategory}
         onLanguageChange={setLanguage}
+      />
+
+      <FileUpload
+        attachments={attachments}
+        onAttachmentsChange={setAttachments}
       />
 
       <ConversationArea

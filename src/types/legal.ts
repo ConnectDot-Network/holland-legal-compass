@@ -3,19 +3,31 @@ export interface ConversationMessage {
   type: 'user' | 'advisor';
   message: string;
   timestamp: Date;
+  attachments?: FileAttachment[];
+}
+
+export interface FileAttachment {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+  uploadedAt: Date;
 }
 
 export const legalCategories = [
-  "Prawo pracy",
-  "Umowy B2B/B2C",
-  "Prawo podatkowe", 
-  "Spółki i start-upy",
+  "Mandaty i wykroczenia",
+  "Sprawy karne", 
+  "Wypadki w pracy i prywatnie",
   "Nieruchomości",
+  "Prawo pracy",
+  "Umowy B2B/B2C", 
+  "Prawo podatkowe",
+  "Spółki i start-upy",
   "Prawo rodzinne",
   "Spadki",
   "Prawo konsumenckie",
-  "RODO / dane osobowe",
-  "Mandaty i wykroczenia"
+  "RODO / dane osobowe"
 ] as const;
 
 export const languages = [
