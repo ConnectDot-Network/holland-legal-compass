@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Scale, MessageSquare, Phone, Briefcase, Languages, Users, MapPin, Clock, User, Moon, Sun, Globe } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import LegalAdvisor from "@/components/LegalAdvisor";
+import LegalAdvisor from "@/components/legal/LegalAdvisor";
 import TranslatorAssistant from "@/components/TranslatorAssistant";
 import Receptionist from "@/components/Receptionist";
 import BusinessAdvisor from "@/components/BusinessAdvisor";
