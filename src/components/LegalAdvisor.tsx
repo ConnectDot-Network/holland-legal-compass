@@ -6,15 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Scale, Send, FileText, AlertCircle, Globe } from "lucide-react";
+import { Scale, Send, FileText, AlertCircle, Globe, Shield, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { validateWebhookUrl, sanitizeInput, isValidCategory, isValidLanguage } from "@/utils/security";
 
 const LegalAdvisor = () => {
   const [question, setQuestion] = useState('');
   const [category, setCategory] = useState('');
   const [language, setLanguage] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('');
-  const [conversation, setConversation] = useState<Array<{type: 'user' | 'advisor', message: string}>>([]);
+  const [webhookError, setWebhookError] = useState('');
+  const [conversation, setConversation] = useState<Array<{type: 'user' | 'advisor', message: string, timestamp: Date}>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -46,36 +48,83 @@ const LegalAdvisor = () => {
     "Włoski"
   ];
 
+  const handleWebhookUrlChange = (url: string) => {
+    setWebhookUrl(url);
+    if (url.trim()) {
+      const validation = validateWebhookUrl(url);
+      setWebhookError(validation.isValid ? '' : validation.error || '');
+    } else {
+      setWebhookError('');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!question.trim() || !category) {
+    
+    // Validate inputs
+    const sanitizedQuestion = sanitizeInput(question, 2000);
+    if (!sanitizedQuestion.trim()) {
       toast({
         title: "Błąd",
-        description: "Wypełnij wszystkie wymagane pola",
+        description: "Pytanie nie może być puste",
         variant: "destructive",
       });
       return;
     }
 
+    if (!category || !isValidCategory(category, legalCategories)) {
+      toast({
+        title: "Błąd",
+        description: "Wybierz prawidłową kategorię",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const selectedLanguage = language || "Polski";
+    if (!isValidLanguage(selectedLanguage, languages)) {
+      toast({
+        title: "Błąd",
+        description: "Wybierz prawidłowy język",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate webhook URL if provided
+    if (webhookUrl.trim()) {
+      const validation = validateWebhookUrl(webhookUrl);
+      if (!validation.isValid) {
+        toast({
+          title: "Błąd Webhook",
+          description: validation.error,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setIsLoading(true);
-    const userMessage = question;
     setQuestion('');
     
     // Add user message to conversation
-    setConversation(prev => [...prev, { type: 'user', message: userMessage }]);
-
-    // Prepare data for webhook
-    const webhookData = {
-      question: userMessage,
-      category: category,
-      language: language || "Polski",
-      timestamp: new Date().toISOString()
+    const newMessage = { 
+      type: 'user' as const, 
+      message: sanitizedQuestion, 
+      timestamp: new Date() 
     };
+    setConversation(prev => [...prev, newMessage]);
 
     try {
-      // Send to webhook if URL is provided
-      if (webhookUrl) {
-        console.log("Sending to webhook:", webhookData);
+      // Send to webhook if URL is provided and valid
+      if (webhookUrl.trim()) {
+        const webhookData = {
+          question: sanitizedQuestion,
+          category: category,
+          language: selectedLanguage,
+          timestamp: new Date().toISOString()
+        };
+
         await fetch(webhookUrl, {
           method: 'POST',
           headers: {
@@ -93,13 +142,18 @@ const LegalAdvisor = () => {
 
       // Simulate AI response
       setTimeout(() => {
-        const response = generateLegalAdvice(userMessage, category, language || "Polski");
-        setConversation(prev => [...prev, { type: 'advisor', message: response }]);
+        const response = generateLegalAdvice(sanitizedQuestion, category, selectedLanguage);
+        const responseMessage = {
+          type: 'advisor' as const,
+          message: response,
+          timestamp: new Date()
+        };
+        setConversation(prev => [...prev, responseMessage]);
         setIsLoading(false);
       }, 1500);
 
     } catch (error) {
-      console.error("Błąd wysyłania:", error);
+      console.error("Błąd wysyłania zapytania");
       toast({
         title: "Błąd",
         description: "Nie udało się wysłać zapytania",
@@ -130,8 +184,70 @@ Na podstawie aktualnego prawa holenderskiego, oto moja analiza:
 **Uwaga**: To jest wstępna analiza. W skomplikowanych sprawach zalecam konsultację z certyfikowanym prawnikiem holenderskim.`;
   };
 
+  const handlePrintConversation = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const html = `
+      <html>
+        <head>
+          <title>Rozmowa z Doradcą Prawnym - Holland Legal Compass</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #ccc; padding-bottom: 20px; }
+            .message { margin: 15px 0; padding: 10px; border-radius: 8px; }
+            .user { background-color: #e3f2fd; margin-left: 20%; }
+            .advisor { background-color: #f5f5f5; margin-right: 20%; }
+            .timestamp { font-size: 0.8em; color: #666; margin-top: 5px; }
+            .category { font-weight: bold; color: #1976d2; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Holland Legal Compass</h1>
+            <h2>Rozmowa z Doradcą Prawnym</h2>
+            <p class="category">Kategoria: ${category}</p>
+            <p>Data wydruku: ${new Date().toLocaleString('pl-PL')}</p>
+          </div>
+          ${conversation.map(msg => `
+            <div class="message ${msg.type}">
+              <strong>${msg.type === 'user' ? 'Ty' : 'Doradca Prawny'}:</strong>
+              <div>${msg.message.replace(/\n/g, '<br>')}</div>
+              <div class="timestamp">${msg.timestamp.toLocaleString('pl-PL')}</div>
+            </div>
+          `).join('')}
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const clearConversation = () => {
+    setConversation([]);
+    toast({
+      title: "Wyczyszczono",
+      description: "Historia rozmowy została usunięta",
+    });
+  };
+
   return (
     <div className="space-y-6">
+      {/* Security Notice */}
+      <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950 dark:border-blue-800">
+        <CardContent className="pt-6">
+          <div className="flex items-center space-x-2 text-blue-700 dark:text-blue-300">
+            <Shield className="w-5 h-5" />
+            <div>
+              <p className="font-medium">Bezpieczeństwo i Prywatność</p>
+              <p className="text-sm">Twoje dane są przetwarzane lokalnie. Webhook URL musi być bezpieczny (HTTPS).</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Configuration */}
       <Card>
         <CardHeader>
@@ -142,12 +258,19 @@ Na podstawie aktualnego prawa holenderskiego, oto moja analiza:
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Webhook URL (n8n)</label>
+            <label className="block text-sm font-medium mb-2">Webhook URL (n8n) - tylko HTTPS</label>
             <Input
-              placeholder="Wprowadź URL webhook n8n..."
+              placeholder="https://twój-webhook.n8n.cloud/webhook/..."
               value={webhookUrl}
-              onChange={(e) => setWebhookUrl(e.target.value)}
+              onChange={(e) => handleWebhookUrlChange(e.target.value)}
+              className={webhookError ? "border-red-500" : ""}
             />
+            {webhookError && (
+              <p className="text-red-500 text-sm mt-1 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-1" />
+                {webhookError}
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -193,7 +316,31 @@ Na podstawie aktualnego prawa holenderskiego, oto moja analiza:
       {/* Conversation Area */}
       <Card className="min-h-[400px]">
         <CardHeader>
-          <CardTitle>Rozmowa z doradcą prawnym</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle>Rozmowa z doradcą prawnym</CardTitle>
+            {conversation.length > 0 && (
+              <div className="flex space-x-2">
+                <Button
+                  onClick={handlePrintConversation}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-1"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Drukuj</span>
+                </Button>
+                <Button
+                  onClick={clearConversation}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-1 text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Wyczyść</span>
+                </Button>
+              </div>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {conversation.length === 0 ? (
@@ -211,6 +358,9 @@ Na podstawie aktualnego prawa holenderskiego, oto moja analiza:
                       : 'bg-gray-100 text-gray-900'
                   }`}>
                     <div className="whitespace-pre-wrap">{msg.message}</div>
+                    <div className={`text-xs mt-2 ${msg.type === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
+                      {msg.timestamp.toLocaleString('pl-PL')}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -234,15 +384,17 @@ Na podstawie aktualnego prawa holenderskiego, oto moja analiza:
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Twoje pytanie prawne *</label>
+              <label className="block text-sm font-medium mb-2">Twoje pytanie prawne * (max 2000 znaków)</label>
               <Textarea
                 placeholder="Opisz swoją sytuację prawną lub zadaj pytanie..."
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 rows={4}
                 className="resize-none"
+                maxLength={2000}
                 required
               />
+              <p className="text-xs text-gray-500 mt-1">{question.length}/2000 znaków</p>
             </div>
             <div className="flex justify-between items-center">
               <Badge variant="outline" className="text-orange-700 border-orange-700">
@@ -251,7 +403,7 @@ Na podstawie aktualnego prawa holenderskiego, oto moja analiza:
               </Badge>
               <Button 
                 type="submit" 
-                disabled={!question.trim() || !category || isLoading}
+                disabled={!question.trim() || !category || isLoading || !!webhookError}
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 <Send className="w-4 h-4 mr-2" />
