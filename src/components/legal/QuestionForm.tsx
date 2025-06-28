@@ -19,7 +19,6 @@ export const QuestionForm = ({
   question, 
   category, 
   isLoading, 
-  webhookError, 
   onQuestionChange, 
   onSubmit 
 }: QuestionFormProps) => {
@@ -47,7 +46,7 @@ export const QuestionForm = ({
             </Badge>
             <Button 
               type="submit" 
-              disabled={!question.trim() || !category || isLoading || !!webhookError}
+              disabled={!question.trim() || !category || isLoading}
               className="bg-blue-600 hover:bg-blue-700"
             >
               <Send className="w-4 h-4 mr-2" />

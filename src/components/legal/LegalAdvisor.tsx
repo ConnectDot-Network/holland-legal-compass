@@ -1,37 +1,27 @@
 
 import React, { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { validateWebhookUrl, sanitizeInput, isValidCategory, isValidLanguage } from "@/utils/security";
+import { sanitizeInput, isValidCategory, isValidLanguage } from "@/utils/security";
 import { generateLegalAdvice } from "@/utils/legalAdviceGenerator";
 import { ConversationMessage, FileAttachment, legalCategories, languages } from "@/types/legal";
 import { SecurityNotice } from "./SecurityNotice";
-import { WebhookConfig } from "./WebhookConfig";
 import { CategoryLanguageSelector } from "./CategoryLanguageSelector";
 import { ConversationArea } from "./ConversationArea";
 import { QuestionForm } from "./QuestionForm";
 import { FileUpload } from "./FileUpload";
 import { LegalResources } from "./LegalResources";
 
+// Hardcoded webhook URL - not visible to users
+const WEBHOOK_URL = 'https://darekpolec.app.n8n.cloud/webhook-test/61602cd2-c01d-4c86-9986-72679b551520';
+
 const LegalAdvisor = () => {
   const [question, setQuestion] = useState('');
   const [category, setCategory] = useState('');
   const [language, setLanguage] = useState('');
-  const [webhookUrl, setWebhookUrl] = useState('');
-  const [webhookError, setWebhookError] = useState('');
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-
-  const handleWebhookUrlChange = (url: string) => {
-    setWebhookUrl(url);
-    if (url.trim()) {
-      const validation = validateWebhookUrl(url);
-      setWebhookError(validation.isValid ? '' : validation.error || '');
-    } else {
-      setWebhookError('');
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,19 +56,6 @@ const LegalAdvisor = () => {
       return;
     }
 
-    // Validate webhook URL if provided
-    if (webhookUrl.trim()) {
-      const validation = validateWebhookUrl(webhookUrl);
-      if (!validation.isValid) {
-        toast({
-          title: "Błąd Webhook",
-          description: validation.error,
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-
     setIsLoading(true);
     setQuestion('');
     
@@ -95,34 +72,32 @@ const LegalAdvisor = () => {
     setAttachments([]);
 
     try {
-      // Send to webhook if URL is provided and valid
-      if (webhookUrl.trim()) {
-        const webhookData = {
-          question: sanitizedQuestion,
-          category: category,
-          language: selectedLanguage,
-          attachments: attachments.map(att => ({
-            name: att.name,
-            type: att.type,
-            size: att.size
-          })),
-          timestamp: new Date().toISOString()
-        };
+      // Send to n8n webhook
+      const webhookData = {
+        question: sanitizedQuestion,
+        category: category,
+        language: selectedLanguage,
+        attachments: attachments.map(att => ({
+          name: att.name,
+          type: att.type,
+          size: att.size
+        })),
+        timestamp: new Date().toISOString()
+      };
 
-        await fetch(webhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          mode: 'no-cors',
-          body: JSON.stringify(webhookData),
-        });
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'no-cors',
+        body: JSON.stringify(webhookData),
+      });
 
-        toast({
-          title: "Wysłano zapytanie",
-          description: "Twoje pytanie i załączniki zostały przekazane do systemu prawniczego",
-        });
-      }
+      toast({
+        title: "Wysłano zapytanie",
+        description: "Twoje pytanie i załączniki zostały przekazane do systemu prawniczego",
+      });
 
       // Simulate AI response
       setTimeout(() => {
@@ -137,7 +112,7 @@ const LegalAdvisor = () => {
       }, 1500);
 
     } catch (error) {
-      console.error("Błąd wysyłania zapytania");
+      console.error("Błąd wysyłania zapytania", error);
       toast({
         title: "Błąd",
         description: "Nie udało się wysłać zapytania",
@@ -159,12 +134,6 @@ const LegalAdvisor = () => {
   return (
     <div className="space-y-6">
       <SecurityNotice />
-      
-      <WebhookConfig
-        webhookUrl={webhookUrl}
-        webhookError={webhookError}
-        onWebhookUrlChange={handleWebhookUrlChange}
-      />
 
       <CategoryLanguageSelector
         category={category}
@@ -189,7 +158,7 @@ const LegalAdvisor = () => {
         question={question}
         category={category}
         isLoading={isLoading}
-        webhookError={webhookError}
+        webhookError=""
         onQuestionChange={setQuestion}
         onSubmit={handleSubmit}
       />
