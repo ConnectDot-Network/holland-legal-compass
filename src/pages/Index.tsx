@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Scale, MessageSquare, Phone, Briefcase, Languages, Users, MapPin, Clock, User, Moon, Sun, Globe } from "lucide-react";
+import { Scale, MessageSquare, Phone, Briefcase, Languages, Users, MapPin, Clock, User, Moon, Sun, Globe, CreditCard } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import LegalAdvisor from "@/components/legal/LegalAdvisor";
 import TranslatorAssistant from "@/components/TranslatorAssistant";
 import Receptionist from "@/components/Receptionist";
 import BusinessAdvisor from "@/components/BusinessAdvisor";
+import MoneyTransfer from "@/components/MoneyTransfer";
 
 const Index = () => {
   const [activeService, setActiveService] = useState<string | null>(null);
@@ -52,10 +53,10 @@ const Index = () => {
     {
       id: "receptionist",
       title: t("receptionist"),
-      description: "Zarządzanie kontaktami i rozmowami",
+      description: "Centrala telefoniczna AI obsługująca do 100 numerów ze sklonowanym głosem (Ringostat)",
       icon: Phone,
       color: "bg-green-600 dark:bg-green-500",
-      features: ["Umówienie wizyt", "Informacje ogólne", "Przekierowanie połączeń", "Obsługa klientów"]
+      features: ["Centrala AI", "Sklonowany głos", "Do 100 numerów", "Integracja Ringostat"]
     },
     {
       id: "business",
@@ -64,6 +65,14 @@ const Index = () => {
       icon: Briefcase,
       color: "bg-purple-600 dark:bg-purple-500",
       features: ["Zakładanie firmy", "Podatki", "Regulacje", "Rozwój biznesu"]
+    },
+    {
+      id: "money-transfer",
+      title: "Przesyłanie Pieniędzy",
+      description: "Bezpieczne przelewy między kontami bankowymi przez Stripe",
+      icon: CreditCard,
+      color: "bg-red-600 dark:bg-red-500",
+      features: ["Przelewy bankowe", "Stripe Connect", "Bezpieczne transakcje", "Niskie prowizje"]
     }
   ];
 
@@ -77,6 +86,8 @@ const Index = () => {
         return <Receptionist />;
       case "business":
         return <BusinessAdvisor />;
+      case "money-transfer":
+        return <MoneyTransfer />;
       default:
         return null;
     }
