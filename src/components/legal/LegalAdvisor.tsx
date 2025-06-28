@@ -1,0 +1,185 @@
+
+import React, { useState } from 'react';
+import { useToast } from "@/hooks/use-toast";
+import { validateWebhookUrl, sanitizeInput, isValidCategory, isValidLanguage } from "@/utils/security";
+import { generateLegalAdvice } from "@/utils/legalAdviceGenerator";
+import { ConversationMessage, legalCategories, languages } from "@/types/legal";
+import { SecurityNotice } from "./SecurityNotice";
+import { WebhookConfig } from "./WebhookConfig";
+import { CategoryLanguageSelector } from "./CategoryLanguageSelector";
+import { ConversationArea } from "./ConversationArea";
+import { QuestionForm } from "./QuestionForm";
+import { LegalResources } from "./LegalResources";
+
+const LegalAdvisor = () => {
+  const [question, setQuestion] = useState('');
+  const [category, setCategory] = useState('');
+  const [language, setLanguage] = useState('');
+  const [webhookUrl, setWebhookUrl] = useState('');
+  const [webhookError, setWebhookError] = useState('');
+  const [conversation, setConversation] = useState<ConversationMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleWebhookUrlChange = (url: string) => {
+    setWebhookUrl(url);
+    if (url.trim()) {
+      const validation = validateWebhookUrl(url);
+      setWebhookError(validation.isValid ? '' : validation.error || '');
+    } else {
+      setWebhookError('');
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate inputs
+    const sanitizedQuestion = sanitizeInput(question, 2000);
+    if (!sanitizedQuestion.trim()) {
+      toast({
+        title: "Błąd",
+        description: "Pytanie nie może być puste",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!category || !isValidCategory(category, legalCategories)) {
+      toast({
+        title: "Błąd",
+        description: "Wybierz prawidłową kategorię",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const selectedLanguage = language || "Polski";
+    if (!isValidLanguage(selectedLanguage, languages)) {
+      toast({
+        title: "Błąd",
+        description: "Wybierz prawidłowy język",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate webhook URL if provided
+    if (webhookUrl.trim()) {
+      const validation = validateWebhookUrl(webhookUrl);
+      if (!validation.isValid) {
+        toast({
+          title: "Błąd Webhook",
+          description: validation.error,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    setIsLoading(true);
+    setQuestion('');
+    
+    // Add user message to conversation
+    const newMessage: ConversationMessage = { 
+      type: 'user', 
+      message: sanitizedQuestion, 
+      timestamp: new Date() 
+    };
+    setConversation(prev => [...prev, newMessage]);
+
+    try {
+      // Send to webhook if URL is provided and valid
+      if (webhookUrl.trim()) {
+        const webhookData = {
+          question: sanitizedQuestion,
+          category: category,
+          language: selectedLanguage,
+          timestamp: new Date().toISOString()
+        };
+
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'no-cors',
+          body: JSON.stringify(webhookData),
+        });
+
+        toast({
+          title: "Wysłano zapytanie",
+          description: "Twoje pytanie zostało przekazane do systemu prawniczego",
+        });
+      }
+
+      // Simulate AI response
+      setTimeout(() => {
+        const response = generateLegalAdvice(sanitizedQuestion, category, selectedLanguage);
+        const responseMessage: ConversationMessage = {
+          type: 'advisor',
+          message: response,
+          timestamp: new Date()
+        };
+        setConversation(prev => [...prev, responseMessage]);
+        setIsLoading(false);
+      }, 1500);
+
+    } catch (error) {
+      console.error("Błąd wysyłania zapytania");
+      toast({
+        title: "Błąd",
+        description: "Nie udało się wysłać zapytania",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const clearConversation = () => {
+    setConversation([]);
+    toast({
+      title: "Wyczyszczono",
+      description: "Historia rozmowy została usunięta",
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <SecurityNotice />
+      
+      <WebhookConfig
+        webhookUrl={webhookUrl}
+        webhookError={webhookError}
+        onWebhookUrlChange={handleWebhookUrlChange}
+      />
+
+      <CategoryLanguageSelector
+        category={category}
+        language={language}
+        onCategoryChange={setCategory}
+        onLanguageChange={setLanguage}
+      />
+
+      <ConversationArea
+        conversation={conversation}
+        category={category}
+        isLoading={isLoading}
+        onClearConversation={clearConversation}
+      />
+
+      <QuestionForm
+        question={question}
+        category={category}
+        isLoading={isLoading}
+        webhookError={webhookError}
+        onQuestionChange={setQuestion}
+        onSubmit={handleSubmit}
+      />
+
+      <LegalResources />
+    </div>
+  );
+};
+
+export default LegalAdvisor;
