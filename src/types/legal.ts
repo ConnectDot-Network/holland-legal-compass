@@ -1,4 +1,3 @@
-
 export interface ConversationMessage {
   type: 'user' | 'advisor';
   message: string;
@@ -21,13 +20,11 @@ export const legalCategories = [
   "Wypadki w pracy i prywatnie",
   "Nieruchomości",
   "Prawo pracy",
-  "Umowy B2B/B2C", 
+  "Umowy B2B/B2C",
   "Prawo podatkowe",
   "Spółki i start-upy",
-  "Prawo rodzinne",
-  "Spadki",
-  "Prawo konsumenckie",
-  "RODO / dane osobowe"
+  "Dofinansowania",
+  "Inne"
 ] as const;
 
 export const languages = [

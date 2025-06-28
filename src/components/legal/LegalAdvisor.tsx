@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { sanitizeInput, isValidCategory, isValidLanguage } from "@/utils/security";
@@ -11,8 +10,8 @@ import { QuestionForm } from "./QuestionForm";
 import { FileUpload } from "./FileUpload";
 import { LegalResources } from "./LegalResources";
 
-// Hardcoded webhook URL - not visible to users
-const WEBHOOK_URL = 'https://darekpolec.app.n8n.cloud/webhook-test/61602cd2-c01d-4c86-9986-72679b551520';
+// Updated webhook URL - not visible to users
+const WEBHOOK_URL = 'https://darekpolec.app.n8n.cloud/webhook-test/Holland Legal Compass';
 
 const LegalAdvisor = () => {
   const [question, setQuestion] = useState('');
