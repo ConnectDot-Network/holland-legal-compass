@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Scale, MessageSquare, Phone, Briefcase, Languages, Users, MapPin, Clock, User, Moon, Sun, Globe, CreditCard } from "lucide-react";
+import { Scale, MessageSquare, Phone, Briefcase, Languages, Users, MapPin, Clock, User, Moon, Sun, Globe, CreditCard, Compass } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import LegalAdvisor from "@/components/legal/LegalAdvisor";
@@ -12,6 +13,7 @@ import TranslatorAssistant from "@/components/TranslatorAssistant";
 import Receptionist from "@/components/Receptionist";
 import BusinessAdvisor from "@/components/BusinessAdvisor";
 import MoneyTransfer from "@/components/MoneyTransfer";
+import FirstStepsHolland from "@/components/FirstStepsHolland";
 
 const Index = () => {
   const [activeService, setActiveService] = useState<string | null>(null);
@@ -73,6 +75,14 @@ const Index = () => {
       icon: CreditCard,
       color: "bg-red-600 dark:bg-red-500",
       features: ["Przelewy bankowe", "Stripe Connect", "Bezpieczne transakcje", "Niskie prowizje"]
+    },
+    {
+      id: "first-steps",
+      title: "Pierwsze kroki w Holandii",
+      description: "Wyszukiwarka biur pracy, ubezpieczeń, mieszkań i innych usług",
+      icon: Compass,
+      color: "bg-teal-600 dark:bg-teal-500",
+      features: ["Biura pracy", "Ubezpieczenia", "Mieszkania", "Telekomunikacja", "Banki"]
     }
   ];
 
@@ -88,6 +98,8 @@ const Index = () => {
         return <BusinessAdvisor />;
       case "money-transfer":
         return <MoneyTransfer />;
+      case "first-steps":
+        return <FirstStepsHolland />;
       default:
         return null;
     }
@@ -182,7 +194,7 @@ const Index = () => {
             </div>
 
             {/* Services Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {services.map((service) => {
                 const IconComponent = service.icon;
                 return (
