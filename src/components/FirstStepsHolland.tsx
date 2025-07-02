@@ -191,7 +191,7 @@ const FirstStepsHolland = () => {
       );
     }
     
-    if (selectedRegion) {
+    if (selectedRegion && selectedRegion !== "all") {
       results = results.filter(service =>
         service.locations.includes(selectedRegion) || 
         service.locations.includes('Cała Holandia') ||
@@ -265,7 +265,7 @@ const FirstStepsHolland = () => {
                   <SelectValue placeholder={t("allRegions")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">{t("allRegions")}</SelectItem>
+                  <SelectItem value="all">{t("allRegions")}</SelectItem>
                   {regions.map((region) => (
                     <SelectItem key={region} value={region}>
                       {region}
