@@ -13,18 +13,18 @@ const InfoSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
           <div>
             <Users className="w-8 h-8 mx-auto mb-2" />
-            <h3 className="font-bold text-lg">1000+ Klientów</h3>
-            <p className="text-blue-100">Zadowolonych użytkowników</p>
+            <h3 className="font-bold text-lg">{t("clientsCount")}</h3>
+            <p className="text-blue-100">{t("satisfiedUsers")}</p>
           </div>
           <div>
             <Clock className="w-8 h-8 mx-auto mb-2" />
             <h3 className="font-bold text-lg">{t("available247")}</h3>
-            <p className="text-blue-100">Wsparcie przez cały rok</p>
+            <p className="text-blue-100">{t("yearRoundSupport")}</p>
           </div>
           <div>
             <Scale className="w-8 h-8 mx-auto mb-2" />
-            <h3 className="font-bold text-lg">Prawo Holenderskie</h3>
-            <p className="text-blue-100">Aktualna wiedza prawnicza</p>
+            <h3 className="font-bold text-lg">{t("dutchLaw")}</h3>
+            <p className="text-blue-100">{t("currentLegalKnowledge")}</p>
           </div>
         </div>
       </CardContent>

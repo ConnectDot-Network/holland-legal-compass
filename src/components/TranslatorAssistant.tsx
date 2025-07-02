@@ -44,13 +44,13 @@ const TranslatorAssistant = () => {
       if (file.type.startsWith('image/')) {
         // For images, we could implement OCR here
         toast({
-          title: "Zdjęcie załadowane",
-          description: `${file.name} - gotowe do analizy tekstu`,
+          title: t("photoUploaded"),
+          description: `${file.name} - ${t("readyForTextAnalysis")}`,
         });
       } else {
         toast({
-          title: "Dokument załadowany",
-          description: `${file.name} - gotowy do tłumaczenia`,
+          title: t("documentUploaded"),
+          description: `${file.name} - ${t("readyForTranslation")}`,
         });
       }
     });
@@ -64,8 +64,8 @@ const TranslatorAssistant = () => {
     e.preventDefault();
     if (!text.trim() && uploadedFiles.length === 0) {
       toast({
-        title: "Błąd",
-        description: "Wprowadź tekst lub załaduj dokument do tłumaczenia",
+        title: t("error"),
+        description: t("enterTextOrUpload"),
         variant: "destructive",
       });
       return;
@@ -80,8 +80,8 @@ const TranslatorAssistant = () => {
       setIsLoading(false);
       
       toast({
-        title: "Tłumaczenie ukończone",
-        description: "Twój tekst został przetłumaczony",
+        title: t("translationCompleted"),
+        description: t("textTranslated"),
       });
     }, 2000);
   };
@@ -116,7 +116,7 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
                 <SelectValue placeholder={t("autoDetect")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="auto">Automatyczne wykrywanie</SelectItem>
+                <SelectItem value="auto">{t("autoDetect")}</SelectItem>
                 {languages.map((lang) => (
                   <SelectItem key={lang} value={lang}>{lang}</SelectItem>
                 ))}
@@ -124,10 +124,10 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
             </Select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">Język docelowy</label>
+            <label className="block text-sm font-medium mb-2">{t("targetLanguage")}</label>
             <Select value={targetLanguage} onValueChange={setTargetLanguage}>
               <SelectTrigger>
-                <SelectValue placeholder="Wybierz język docelowy" />
+                <SelectValue placeholder={t("selectTargetLanguage")} />
               </SelectTrigger>
               <SelectContent>
                 {languages.map((lang) => (
@@ -144,7 +144,7 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Upload className="w-5 h-5 text-orange-600" />
-            <span>Załaduj dokumenty lub zdjęcia</span>
+            <span>{t("uploadDocuments")}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -156,7 +156,7 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
               className="flex items-center space-x-2"
             >
               <FileText className="w-4 h-4" />
-              <span>Załaduj dokument</span>
+              <span>{t("uploadDocument")}</span>
             </Button>
             <Button
               type="button"
@@ -170,7 +170,7 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
               className="flex items-center space-x-2"
             >
               <Camera className="w-4 h-4" />
-              <span>Zrób zdjęcie</span>
+              <span>{t("takePhoto")}</span>
             </Button>
           </div>
 
@@ -186,7 +186,7 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
           {/* Uploaded Files */}
           {uploadedFiles.length > 0 && (
             <div className="space-y-2">
-              <h4 className="font-medium">Załadowane pliki:</h4>
+              <h4 className="font-medium">{t("uploadedFiles")}</h4>
               <div className="space-y-2">
                 {uploadedFiles.map((file, index) => (
                   <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
@@ -220,12 +220,12 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
       {/* Text Input */}
       <Card>
         <CardHeader>
-          <CardTitle>Tekst do tłumaczenia</CardTitle>
+          <CardTitle>{t("textToTranslate")}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Textarea
-              placeholder="Wprowadź tekst do tłumaczenia lub załaduj dokument powyżej..."
+              placeholder={t("textPlaceholder")}
               value={text}
               onChange={(e) => setText(e.target.value)}
               rows={6}
@@ -234,7 +234,7 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
             <div className="flex justify-between items-center">
               <Badge variant="outline" className="text-blue-700 border-blue-700">
                 <Languages className="w-3 h-3 mr-1" />
-                Profesjonalne tłumaczenia
+                {t("professionalTranslations")}
               </Badge>
               <Button 
                 type="submit" 
@@ -242,7 +242,7 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
                 className="bg-orange-600 hover:bg-orange-700"
               >
                 <Send className="w-4 h-4 mr-2" />
-                {isLoading ? 'Tłumaczę...' : 'Przetłumacz'}
+                {isLoading ? t("translating") : t("translate")}
               </Button>
             </div>
           </form>
@@ -253,13 +253,13 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
       {(translation || isLoading) && (
         <Card>
           <CardHeader>
-            <CardTitle>Wynik tłumaczenia</CardTitle>
+            <CardTitle>{t("translationResult")}</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <div className="flex items-center space-x-2 py-8">
                 <div className="animate-spin w-6 h-6 border-2 border-orange-600 border-t-transparent rounded-full"></div>
-                <span>Tłumaczenie w toku...</span>
+                <span>{t("translationInProgress")}</span>
               </div>
             ) : (
               <div className="space-y-4">
@@ -269,10 +269,10 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm">
                     <FileText className="w-4 h-4 mr-2" />
-                    Eksportuj PDF
+                    {t("exportPDF")}
                   </Button>
                   <Button variant="outline" size="sm">
-                    Kopiuj tłumaczenie
+                    {t("copyTranslation")}
                   </Button>
                 </div>
               </div>
@@ -286,27 +286,27 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <FileText className="w-5 h-5 text-green-600" />
-            <span>Usługi tłumaczeniowe</span>
+            <span>{t("translationServices")}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <h4 className="font-medium">Specjalistyczne tłumaczenia:</h4>
+              <h4 className="font-medium">{t("specializedTranslations")}</h4>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Dokumenty urzędowe</li>
-                <li>• Umowy i kontrakty</li>
-                <li>• Akty notarialne</li>
-                <li>• Dokumenty medyczne</li>
+                <li>• {t("officialDocumentsDetail")}</li>
+                <li>• {t("contractsAndAgreements")}</li>
+                <li>• {t("notarialActs")}</li>
+                <li>• {t("medicalDocuments")}</li>
               </ul>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium">Wsparcie techniczne:</h4>
+              <h4 className="font-medium">{t("technicalSupport")}</h4>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• OCR ze zdjęć</li>
-                <li>• Rozpoznawanie pisma ręcznego</li>
-                <li>• Tłumaczenia certyfikowane</li>
-                <li>• Wsparcie 24/7</li>
+                <li>• {t("ocrFromPhotos")}</li>
+                <li>• {t("handwritingRecognition")}</li>
+                <li>• {t("certifiedTranslations")}</li>
+                <li>• {t("support247")}</li>
               </ul>
             </div>
           </div>

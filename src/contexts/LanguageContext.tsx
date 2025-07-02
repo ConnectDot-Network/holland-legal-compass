@@ -28,7 +28,7 @@ const translations = {
     darkMode: "Tryb ciemny",
     language: "Język",
     
-    // Services
+    // Services titles
     moneyTransfer: "Przesyłanie Pieniędzy",
     firstSteps: "Pierwsze kroki w Holandii",
     
@@ -91,7 +91,69 @@ const translations = {
     copyTranslation: "Kopiuj tłumaczenie",
     translationServices: "Usługi tłumaczeniowe",
     specializedTranslations: "Specjalistyczne tłumaczenia:",
-    technicalSupport: "Wsparcie techniczne:"
+    technicalSupport: "Wsparcie techniczne:",
+    
+    // Services descriptions and features
+    legalAdvisorDescription: "Specjalista od prawa holenderskiego",
+    translatorDescription: "Profesjonalne tłumaczenia prawnicze",
+    receptionistDescription: "Centrala telefoniczna AI obsługująca do 100 numerów ze sklonowanym głosem (Ringostat)",
+    businessAdvisorDescription: "Wsparcie w prowadzeniu biznesu w Holandii",
+    moneyTransferServiceDescription: "Bezpieczne przelewy między kontami bankowymi przez Stripe",
+    firstStepsServiceDescription: "Wyszukiwarka biur pracy, ubezpieczeń, mieszkań i innych usług",
+    
+    // Service features
+    specializations: "Specjalizacje:",
+    laborLaw: "Prawo pracy",
+    contractsB2B: "Umowy B2B/B2C",
+    taxLaw: "Prawo podatkowe", 
+    companiesStartups: "Spółki i start-upy",
+    officialDocuments: "Dokumenty urzędowe",
+    contracts: "Umowy",
+    correspondence: "Korespondencja",
+    documentUpload: "Upload dokumentów",
+    aiSwitchboard: "Centrala AI",
+    clonedVoice: "Sklonowany głos",
+    up100Numbers: "Do 100 numerów",
+    rgingostatIntegration: "Integracja Ringostat",
+    companyEstablishment: "Zakładanie firmy",
+    taxes: "Podatki",
+    regulations: "Regulacje",
+    businessDevelopment: "Rozwój biznesu",
+    bankTransfers: "Przelewy bankowe",
+    stripeConnect: "Stripe Connect",
+    secureTransactions: "Bezpieczne transakcje",
+    lowCommissions: "Niskie prowizje",
+    
+    // Info section
+    clientsCount: "1000+ Klientów",
+    satisfiedUsers: "Zadowolonych użytkowników",
+    yearRoundSupport: "Wsparcie przez cały rok",
+    dutchLaw: "Prawo Holenderskie",
+    currentLegalKnowledge: "Aktualna wiedza prawnicza",
+    
+    // Error messages
+    error: "Błąd",
+    fillAllFields: "Wypełnij wszystkie wymagane pola",
+    amountGreaterThanZero: "Kwota musi być większa od 0",
+    transferError: "Błąd transferu",
+    transferFailed: "Nie udało się wysłać przelewu. Spróbuj ponownie.",
+    photoUploaded: "Zdjęcie załadowane",
+    readyForTextAnalysis: "gotowe do analizy tekstu",
+    documentUploaded: "Dokument załadowany",
+    readyForTranslation: "gotowy do tłumaczenia",
+    enterTextOrUpload: "Wprowadź tekst lub załaduj dokument do tłumaczenia",
+    translationCompleted: "Tłumaczenie ukończone",
+    textTranslated: "Twój tekst został przetłumaczony",
+    
+    // Translator details
+    officialDocumentsDetail: "Dokumenty urzędowe",
+    contractsAndAgreements: "Umowy i kontrakty",
+    notarialActs: "Akty notarialne",
+    medicalDocuments: "Dokumenty medyczne",
+    ocrFromPhotos: "OCR ze zdjęć",
+    handwritingRecognition: "Rozpoznawanie pisma ręcznego",
+    certifiedTranslations: "Tłumaczenia certyfikowane",
+    support247: "Wsparcie 24/7"
   },
   en: {
     appTitle: "Holland Legal Compass",
@@ -112,7 +174,7 @@ const translations = {
     darkMode: "Dark mode",
     language: "Language",
     
-    // Services
+    // Services titles
     moneyTransfer: "Money Transfer",
     firstSteps: "First Steps in Holland",
     
@@ -175,7 +237,69 @@ const translations = {
     copyTranslation: "Copy translation",
     translationServices: "Translation services",
     specializedTranslations: "Specialized translations:",
-    technicalSupport: "Technical support:"
+    technicalSupport: "Technical support:",
+    
+    // Services descriptions and features
+    legalAdvisorDescription: "Dutch law specialist",
+    translatorDescription: "Professional legal translations",
+    receptionistDescription: "AI switchboard handling up to 100 numbers with cloned voice (Ringostat)",
+    businessAdvisorDescription: "Business support in the Netherlands",
+    moneyTransferServiceDescription: "Secure transfers between bank accounts via Stripe",
+    firstStepsServiceDescription: "Search engine for job agencies, insurance, housing and other services",
+    
+    // Service features
+    specializations: "Specializations:",
+    laborLaw: "Labor law",
+    contractsB2B: "B2B/B2C contracts",
+    taxLaw: "Tax law",
+    companiesStartups: "Companies & start-ups",
+    officialDocuments: "Official documents",
+    contracts: "Contracts",
+    correspondence: "Correspondence",
+    documentUpload: "Document upload",
+    aiSwitchboard: "AI switchboard",
+    clonedVoice: "Cloned voice",
+    up100Numbers: "Up to 100 numbers",
+    rgingostatIntegration: "Ringostat integration",
+    companyEstablishment: "Company establishment",
+    taxes: "Taxes",
+    regulations: "Regulations",
+    businessDevelopment: "Business development",
+    bankTransfers: "Bank transfers",
+    stripeConnect: "Stripe Connect",
+    secureTransactions: "Secure transactions",
+    lowCommissions: "Low commissions",
+    
+    // Info section
+    clientsCount: "1000+ Clients",
+    satisfiedUsers: "Satisfied users",
+    yearRoundSupport: "Year-round support",
+    dutchLaw: "Dutch Law",
+    currentLegalKnowledge: "Current legal knowledge",
+    
+    // Error messages
+    error: "Error",
+    fillAllFields: "Fill in all required fields",
+    amountGreaterThanZero: "Amount must be greater than 0",
+    transferError: "Transfer error",
+    transferFailed: "Failed to send transfer. Try again.",
+    photoUploaded: "Photo uploaded",
+    readyForTextAnalysis: "ready for text analysis",
+    documentUploaded: "Document uploaded",
+    readyForTranslation: "ready for translation",
+    enterTextOrUpload: "Enter text or upload document for translation",
+    translationCompleted: "Translation completed",
+    textTranslated: "Your text has been translated",
+    
+    // Translator details
+    officialDocumentsDetail: "Official documents",
+    contractsAndAgreements: "Contracts and agreements",
+    notarialActs: "Notarial acts",
+    medicalDocuments: "Medical documents",
+    ocrFromPhotos: "OCR from photos",
+    handwritingRecognition: "Handwriting recognition",
+    certifiedTranslations: "Certified translations",
+    support247: "24/7 Support"
   },
   nl: {
     appTitle: "Holland Legal Compass",
@@ -196,7 +320,7 @@ const translations = {
     darkMode: "Donkere modus",
     language: "Taal",
     
-    // Services
+    // Services titles
     moneyTransfer: "Geldtransfer",
     firstSteps: "Eerste Stappen in Nederland",
     
@@ -259,7 +383,69 @@ const translations = {
     copyTranslation: "Kopieer vertaling",
     translationServices: "Vertaaldiensten",
     specializedTranslations: "Gespecialiseerde vertalingen:",
-    technicalSupport: "Technische ondersteuning:"
+    technicalSupport: "Technische ondersteuning:",
+    
+    // Services descriptions and features
+    legalAdvisorDescription: "Nederlandse rechtsspecialist",
+    translatorDescription: "Professionele juridische vertalingen",
+    receptionistDescription: "AI-centrale die tot 100 nummers afhandelt met gekloonde stem (Ringostat)",
+    businessAdvisorDescription: "Bedrijfsondersteuning in Nederland",
+    moneyTransferServiceDescription: "Veilige overboekingen tussen bankrekeningen via Stripe",
+    firstStepsServiceDescription: "Zoekmachine voor uitzendbureaus, verzekeringen, huisvesting en andere diensten",
+    
+    // Service features
+    specializations: "Specialisaties:",
+    laborLaw: "Arbeidsrecht",
+    contractsB2B: "B2B/B2C contracten",
+    taxLaw: "Belastingrecht",
+    companiesStartups: "Bedrijven & start-ups",
+    officialDocuments: "Officiële documenten",
+    contracts: "Contracten",
+    correspondence: "Correspondentie",
+    documentUpload: "Document upload",
+    aiSwitchboard: "AI-centrale",
+    clonedVoice: "Gekloonde stem",
+    up100Numbers: "Tot 100 nummers",
+    rgingostatIntegration: "Ringostat integratie",
+    companyEstablishment: "Bedrijfsoprichting",
+    taxes: "Belastingen",
+    regulations: "Regelgeving",
+    businessDevelopment: "Bedrijfsontwikkeling",
+    bankTransfers: "Bankoverschrijvingen",
+    stripeConnect: "Stripe Connect",
+    secureTransactions: "Veilige transacties",
+    lowCommissions: "Lage commissies",
+    
+    // Info section
+    clientsCount: "1000+ Klanten",
+    satisfiedUsers: "Tevreden gebruikers",
+    yearRoundSupport: "Het hele jaar door ondersteuning",
+    dutchLaw: "Nederlandse Wetgeving",
+    currentLegalKnowledge: "Actuele juridische kennis",
+    
+    // Error messages
+    error: "Fout",
+    fillAllFields: "Vul alle verplichte velden in",
+    amountGreaterThanZero: "Bedrag moet groter zijn dan 0",
+    transferError: "Overboekingsfout",
+    transferFailed: "Ovenboeking mislukt. Probeer opnieuw.",
+    photoUploaded: "Foto geüpload",
+    readyForTextAnalysis: "klaar voor tekstanalyse",
+    documentUploaded: "Document geüpload",
+    readyForTranslation: "klaar voor vertaling",
+    enterTextOrUpload: "Voer tekst in of upload document voor vertaling",
+    translationCompleted: "Vertaling voltooid",
+    textTranslated: "Uw tekst is vertaald",
+    
+    // Translator details
+    officialDocumentsDetail: "Officiële documenten",
+    contractsAndAgreements: "Contracten en overeenkomsten",
+    notarialActs: "Notariële akten",
+    medicalDocuments: "Medische documenten",
+    ocrFromPhotos: "OCR van foto's",
+    handwritingRecognition: "Handschriftherkenning",
+    certifiedTranslations: "Gecertificeerde vertalingen",
+    support247: "24/7 Ondersteuning"
   },
   tr: {
     appTitle: "Holland Legal Compass",
@@ -280,7 +466,7 @@ const translations = {
     darkMode: "Koyu mod",
     language: "Dil",
     
-    // Services
+    // Services titles
     moneyTransfer: "Para Transferi",
     firstSteps: "Hollanda'da İlk Adımlar",
     
@@ -343,7 +529,69 @@ const translations = {
     copyTranslation: "Çeviriyi kopyala",
     translationServices: "Çeviri hizmetleri",
     specializedTranslations: "Uzman çeviriler:",
-    technicalSupport: "Teknik destek:"
+    technicalSupport: "Teknik destek:",
+    
+    // Services descriptions and features
+    legalAdvisorDescription: "Hollanda hukuk uzmanı",
+    translatorDescription: "Profesyonel hukuki çeviriler",
+    receptionistDescription: "Klonlanmış sesle 100 numaraya kadar işleyen AI santral (Ringostat)",
+    businessAdvisorDescription: "Hollanda'da iş desteği",
+    moneyTransferServiceDescription: "Stripe aracılığıyla banka hesapları arası güvenli transferler",
+    firstStepsServiceDescription: "İş büroları, sigorta, konut ve diğer hizmetler için arama motoru",
+    
+    // Service features
+    specializations: "Uzmanlaşma alanları:",
+    laborLaw: "İş hukuku",
+    contractsB2B: "B2B/B2C sözleşmeler",
+    taxLaw: "Vergi hukuku",
+    companiesStartups: "Şirketler ve girişimler",
+    officialDocuments: "Resmi belgeler",
+    contracts: "Sözleşmeler",
+    correspondence: "Yazışmalar",
+    documentUpload: "Belge yükleme",
+    aiSwitchboard: "AI santral",
+    clonedVoice: "Klonlanmış ses",
+    up100Numbers: "100 numaraya kadar",
+    rgingostatIntegration: "Ringostat entegrasyonu",
+    companyEstablishment: "Şirket kurma",
+    taxes: "Vergiler",
+    regulations: "Düzenlemeler",
+    businessDevelopment: "İş geliştirme",
+    bankTransfers: "Banka transferleri",
+    stripeConnect: "Stripe Connect",
+    secureTransactions: "Güvenli işlemler",
+    lowCommissions: "Düşük komisyonlar",
+    
+    // Info section
+    clientsCount: "1000+ Müşteri",
+    satisfiedUsers: "Memnun kullanıcılar",
+    yearRoundSupport: "Yıl boyunca destek",
+    dutchLaw: "Hollanda Hukuku",
+    currentLegalKnowledge: "Güncel hukuki bilgi",
+    
+    // Error messages
+    error: "Hata",
+    fillAllFields: "Tüm zorunlu alanları doldurun",
+    amountGreaterThanZero: "Miktar 0'dan büyük olmalıdır",
+    transferError: "Transfer hatası",
+    transferFailed: "Transfer gönderilemedi. Tekrar deneyin.",
+    photoUploaded: "Fotoğraf yüklendi",
+    readyForTextAnalysis: "metin analizi için hazır",
+    documentUploaded: "Belge yüklendi",
+    readyForTranslation: "çeviri için hazır",
+    enterTextOrUpload: "Çeviri için metin girin veya belge yükleyin",
+    translationCompleted: "Çeviri tamamlandı",
+    textTranslated: "Metniniz çevrildi",
+    
+    // Translator details
+    officialDocumentsDetail: "Resmi belgeler",
+    contractsAndAgreements: "Sözleşmeler ve anlaşmalar",
+    notarialActs: "Noter belgeleri",
+    medicalDocuments: "Tıbbi belgeler",
+    ocrFromPhotos: "Fotoğraflardan OCR",
+    handwritingRecognition: "El yazısı tanıma",
+    certifiedTranslations: "Sertifikalı çeviriler",
+    support247: "24/7 Destek"
   }
 };
 

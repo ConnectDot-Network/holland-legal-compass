@@ -26,50 +26,50 @@ const ServicesGrid = ({ onServiceSelect }: ServicesGridProps) => {
     {
       id: "legal",
       title: t("legalAdvisor"),
-      description: "Specjalista od prawa holenderskiego",
+      description: t("legalAdvisorDescription"),
       icon: Scale,
       color: "bg-blue-600 dark:bg-blue-500",
-      features: ["Prawo pracy", "Umowy B2B/B2C", "Prawo podatkowe", "Spółki i start-upy"]
+      features: [t("laborLaw"), t("contractsB2B"), t("taxLaw"), t("companiesStartups")]
     },
     {
       id: "translator",
       title: t("translator"),
-      description: "Profesjonalne tłumaczenia prawnicze",
+      description: t("translatorDescription"),
       icon: Languages,
       color: "bg-orange-600 dark:bg-orange-500",
-      features: ["Dokumenty urzędowe", "Umowy", "Korespondencja", "Upload dokumentów"]
+      features: [t("officialDocuments"), t("contracts"), t("correspondence"), t("documentUpload")]
     },
     {
       id: "receptionist",
       title: t("receptionist"),
-      description: "Centrala telefoniczna AI obsługująca do 100 numerów ze sklonowanym głosem (Ringostat)",
+      description: t("receptionistDescription"),
       icon: Phone,
       color: "bg-green-600 dark:bg-green-500",
-      features: ["Centrala AI", "Sklonowany głos", "Do 100 numerów", "Integracja Ringostat"]
+      features: [t("aiSwitchboard"), t("clonedVoice"), t("up100Numbers"), t("rgingostatIntegration")]
     },
     {
       id: "business",
       title: t("businessAdvisor"),
-      description: "Wsparcie w prowadzeniu biznesu w Holandii",
+      description: t("businessAdvisorDescription"),
       icon: Briefcase,
       color: "bg-purple-600 dark:bg-purple-500",
-      features: ["Zakładanie firmy", "Podatki", "Regulacje", "Rozwój biznesu"]
+      features: [t("companyEstablishment"), t("taxes"), t("regulations"), t("businessDevelopment")]
     },
     {
       id: "money-transfer",
-      title: "Przesyłanie Pieniędzy",
-      description: "Bezpieczne przelewy między kontami bankowymi przez Stripe",
+      title: t("moneyTransfer"),
+      description: t("moneyTransferServiceDescription"),
       icon: CreditCard,
       color: "bg-red-600 dark:bg-red-500",
-      features: ["Przelewy bankowe", "Stripe Connect", "Bezpieczne transakcje", "Niskie prowizje"]
+      features: [t("bankTransfers"), t("stripeConnect"), t("secureTransactions"), t("lowCommissions")]
     },
     {
       id: "first-steps",
-      title: "Pierwsze kroki w Holandii",
-      description: "Wyszukiwarka biur pracy, ubezpieczeń, mieszkań i innych usług",
+      title: t("firstSteps"),
+      description: t("firstStepsServiceDescription"),
       icon: Compass,
       color: "bg-teal-600 dark:bg-teal-500",
-      features: ["Biura pracy", "Ubezpieczenia", "Mieszkania", "Telekomunikacja", "Banki"]
+      features: [t("workOffices"), t("insurance"), t("housing"), t("telecom"), t("banking")]
     }
   ];
 
@@ -98,7 +98,7 @@ const ServicesGrid = ({ onServiceSelect }: ServicesGridProps) => {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <p className="font-medium text-gray-700 dark:text-gray-300">Specjalizacje:</p>
+                <p className="font-medium text-gray-700 dark:text-gray-300">{t("specializations")}</p>
                 <div className="flex flex-wrap gap-2">
                   {service.features.map((feature, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
