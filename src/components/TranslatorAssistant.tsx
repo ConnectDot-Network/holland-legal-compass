@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Languages, Send, FileText, Upload, Camera, Image, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const TranslatorAssistant = () => {
   const [text, setText] = useState('');
@@ -18,6 +19,7 @@ const TranslatorAssistant = () => {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const languages = [
     "Polski",
@@ -103,15 +105,15 @@ To jest przykładowe tłumaczenie Twojego tekstu. W rzeczywistej aplikacji tutaj
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Languages className="w-5 h-5 text-orange-600" />
-            <span>Wybierz języki</span>
+            <span>{t("translatorTitle")}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Język źródłowy</label>
+            <label className="block text-sm font-medium mb-2">{t("sourceLanguage")}</label>
             <Select value={sourceLanguage} onValueChange={setSourceLanguage}>
               <SelectTrigger>
-                <SelectValue placeholder="Automatyczne wykrywanie" />
+                <SelectValue placeholder={t("autoDetect")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="auto">Automatyczne wykrywanie</SelectItem>

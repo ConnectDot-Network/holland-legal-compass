@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Send, AlertCircle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface QuestionFormProps {
   question: string;
@@ -22,14 +23,15 @@ export const QuestionForm = ({
   onQuestionChange, 
   onSubmit 
 }: QuestionFormProps) => {
+  const { t } = useLanguage();
   return (
     <Card>
       <CardContent className="pt-6">
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Twoje pytanie prawne * (max 2000 znaków)</label>
+            <label className="block text-sm font-medium mb-2">{t("questionLabel")}</label>
             <Textarea
-              placeholder="Opisz swoją sytuację prawną lub zadaj pytanie..."
+              placeholder={t("questionPlaceholder")}
               value={question}
               onChange={(e) => onQuestionChange(e.target.value)}
               rows={4}
@@ -37,12 +39,12 @@ export const QuestionForm = ({
               maxLength={2000}
               required
             />
-            <p className="text-xs text-gray-500 mt-1">{question.length}/2000 znaków</p>
+            <p className="text-xs text-gray-500 mt-1">{question.length}/2000 {t("charactersCount")}</p>
           </div>
           <div className="flex justify-between items-center">
             <Badge variant="outline" className="text-orange-700 border-orange-700">
               <AlertCircle className="w-3 h-3 mr-1" />
-              Porada wstępna - nie zastępuje prawnika
+              {t("disclaimerText")}
             </Badge>
             <Button 
               type="submit" 
@@ -50,7 +52,7 @@ export const QuestionForm = ({
               className="bg-blue-600 hover:bg-blue-700"
             >
               <Send className="w-4 h-4 mr-2" />
-              Rozpocznij rozmowę
+              {t("startConversationBtn")}
             </Button>
           </div>
         </form>

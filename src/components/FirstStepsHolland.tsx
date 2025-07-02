@@ -8,19 +8,21 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, MapPin, Briefcase, Shield, Home, Phone, Globe, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const FirstStepsHolland = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const categories = [
-    { id: 'work', name: 'Biura pracy', icon: Briefcase, color: 'bg-blue-600' },
-    { id: 'insurance', name: 'Ubezpieczenia', icon: Shield, color: 'bg-green-600' },
-    { id: 'housing', name: 'Mieszkania', icon: Home, color: 'bg-purple-600' },
-    { id: 'telecom', name: 'Telekomunikacja', icon: Phone, color: 'bg-orange-600' },
-    { id: 'banking', name: 'Banki', icon: Globe, color: 'bg-red-600' }
+    { id: 'work', name: t("workOffices"), icon: Briefcase, color: 'bg-blue-600' },
+    { id: 'insurance', name: t("insurance"), icon: Shield, color: 'bg-green-600' },
+    { id: 'housing', name: t("housing"), icon: Home, color: 'bg-purple-600' },
+    { id: 'telecom', name: t("telecom"), icon: Phone, color: 'bg-orange-600' },
+    { id: 'banking', name: t("banking"), icon: Globe, color: 'bg-red-600' }
   ];
 
   const regions = [
@@ -222,9 +224,9 @@ const FirstStepsHolland = () => {
       <Card className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
         <CardContent className="p-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2">Pierwsze kroki w Holandii</h2>
+            <h2 className="text-2xl font-bold mb-2">{t("firstStepsTitle")}</h2>
             <p className="text-blue-100">
-              Znajdź wszystkie niezbędne usługi potrzebne w pierwszych miesiącach pobytu
+              {t("firstStepsDescription")}
             </p>
           </div>
         </CardContent>
@@ -235,16 +237,16 @@ const FirstStepsHolland = () => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Search className="w-5 h-5 text-blue-600" />
-            <span>Wyszukiwarka usług</span>
+            <span>{t("serviceSearchTitle")}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Kategoria</label>
+              <label className="block text-sm font-medium mb-2">{t("category")}</label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Wybierz kategorię" />
+                  <SelectValue placeholder={t("selectCategoryGeneral")} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
@@ -257,13 +259,13 @@ const FirstStepsHolland = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-2">Region</label>
+              <label className="block text-sm font-medium mb-2">{t("region")}</label>
               <Select value={selectedRegion} onValueChange={setSelectedRegion}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Wszystkie regiony" />
+                  <SelectValue placeholder={t("allRegions")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Wszystkie regiony</SelectItem>
+                  <SelectItem value="">{t("allRegions")}</SelectItem>
                   {regions.map((region) => (
                     <SelectItem key={region} value={region}>
                       {region}
@@ -274,10 +276,10 @@ const FirstStepsHolland = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-2">Wyszukaj</label>
+              <label className="block text-sm font-medium mb-2">{t("searchLabel")}</label>
               <div className="flex space-x-2">
                 <Input
-                  placeholder="Nazwa lub usługa..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -292,8 +294,8 @@ const FirstStepsHolland = () => {
 
       <Tabs defaultValue="categories" className="space-y-4">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="categories">Kategorie</TabsTrigger>
-          <TabsTrigger value="results">Wyniki wyszukiwania</TabsTrigger>
+          <TabsTrigger value="categories">{t("categories")}</TabsTrigger>
+          <TabsTrigger value="results">{t("searchResults")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="categories">
@@ -316,7 +318,7 @@ const FirstStepsHolland = () => {
                       <div>
                         <h3 className="font-medium">{category.name}</h3>
                         <p className="text-sm text-gray-500">
-                          {services[category.id as keyof typeof services]?.length || 0} usług
+                          {services[category.id as keyof typeof services]?.length || 0} {t("services")}
                         </p>
                       </div>
                     </div>
@@ -334,7 +336,7 @@ const FirstStepsHolland = () => {
                 <CardContent className="p-8 text-center">
                   <Search className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                   <p className="text-gray-500">
-                    {selectedCategory ? 'Brak wyników dla wybranych kryteriów' : 'Wybierz kategorię aby zobaczyć wyniki'}
+                    {selectedCategory ? t("noResults") : t("selectCategoryToSee")}
                   </p>
                 </CardContent>
               </Card>
@@ -398,7 +400,7 @@ const FirstStepsHolland = () => {
       {/* Quick Tips */}
       <Card>
         <CardHeader>
-          <CardTitle>Przydatne wskazówki</CardTitle>
+          <CardTitle>{t("usefulTips")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

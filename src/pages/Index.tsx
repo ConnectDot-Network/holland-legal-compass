@@ -18,8 +18,8 @@ const Index = () => {
     { id: "translator", title: t("translator") },
     { id: "receptionist", title: t("receptionist") },
     { id: "business", title: t("businessAdvisor") },
-    { id: "money-transfer", title: "Przesyłanie Pieniędzy" },
-    { id: "first-steps", title: "Pierwsze kroki w Holandii" }
+    { id: "money-transfer", title: t("moneyTransfer") },
+    { id: "first-steps", title: t("firstSteps") }
   ];
 
   return (
