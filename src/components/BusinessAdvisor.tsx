@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Briefcase, TrendingUp, Euro, FileText, Building, Users, Calculator } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const BusinessAdvisor = () => {
   const [businessType, setBusinessType] = useState('');
@@ -16,6 +17,7 @@ const BusinessAdvisor = () => {
   const [conversation, setConversation] = useState<Array<{type: 'user' | 'advisor', message: string}>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const businessTypes = [
     'Jednoosobowa działalność (Eenmanszaak)',
@@ -97,13 +99,13 @@ const BusinessAdvisor = () => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Briefcase className="w-5 h-5 text-purple-600" />
-            <span>Forma prawna działalności</span>
+            <span>{t("businessLegalForm")}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Select value={businessType} onValueChange={setBusinessType}>
             <SelectTrigger>
-              <SelectValue placeholder="Wybierz formę prawną" />
+              <SelectValue placeholder={t("selectLegalForm")} />
             </SelectTrigger>
             <SelectContent>
               {businessTypes.map((type) => (
@@ -116,10 +118,10 @@ const BusinessAdvisor = () => {
 
       <Tabs defaultValue="chat" className="space-y-4">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="chat">Czat</TabsTrigger>
-          <TabsTrigger value="calculator">Kalkulator</TabsTrigger>
-          <TabsTrigger value="resources">Zasoby</TabsTrigger>
-          <TabsTrigger value="checklist">Lista kontrolna</TabsTrigger>
+          <TabsTrigger value="chat">{t("chat")}</TabsTrigger>
+          <TabsTrigger value="calculator">{t("calculator")}</TabsTrigger>
+          <TabsTrigger value="resources">{t("resources")}</TabsTrigger>
+          <TabsTrigger value="checklist">{t("checklist")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="chat" className="space-y-4">
