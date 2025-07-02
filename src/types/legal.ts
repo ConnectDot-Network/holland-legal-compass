@@ -24,6 +24,8 @@ export const legalCategories = [
   "Prawo podatkowe",
   "Spółki i start-upy",
   "Dofinansowania",
+  "Prawo rodzinne",
+  "Prawo ekstradycyjne",
   "Inne"
 ] as const;
 
