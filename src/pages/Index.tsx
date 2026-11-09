@@ -1,59 +1,33 @@
+import { useState } from 'react';
+import { ArrowUpRight, HeartPulse, House, Baby, Users, BookOpen, CheckCircle2, ArrowRight, Search, ShieldCheck } from 'lucide-react';
+import './portal.css';
+import NewsSection from '@/components/NewsSection';
 
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
-import Header from "@/components/layout/Header";
-import HeroSection from "@/components/home/HeroSection";
-import ServicesGrid from "@/components/home/ServicesGrid";
-import InfoSection from "@/components/home/InfoSection";
-import CompanySection from "@/components/home/CompanySection";
-import ServiceRenderer from "@/components/home/ServiceRenderer";
-
-const Index = () => {
-  const [activeService, setActiveService] = useState<string | null>(null);
-  const { t } = useLanguage();
-
-  const services = [
-    { id: "legal", title: t("legalAdvisor") },
-    { id: "translator", title: t("translator") },
-    { id: "receptionist", title: t("receptionist") },
-    { id: "business", title: t("businessAdvisor") },
-    { id: "money-transfer", title: t("moneyTransfer") },
-    { id: "first-steps", title: t("firstSteps") }
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors">
-      <Header />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {activeService ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {services.find(s => s.id === activeService)?.title}
-              </h2>
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveService(null)}
-                className="hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                ← {t("backToServices")}
-              </Button>
-            </div>
-            <ServiceRenderer activeService={activeService} />
-          </div>
-        ) : (
-          <>
-            <HeroSection />
-            <ServicesGrid onServiceSelect={setActiveService} />
-            <InfoSection />
-            <CompanySection />
-          </>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default Index;
+const root = 'https://www.belastingdienst.nl/wps/wcm/connect/nl/';
+const benefits = [
+  { name: 'Zorgtoeslag', label: 'Ubezpieczenie zdrowotne', text: 'Dopłata do kosztów ubezpieczenia zdrowotnego. Poznaj warunki i sprawdź swoją sytuację.', icon: HeartPulse, url: root+'zorgtoeslag/zorgtoeslag', tag: 'Zdrowie' },
+  { name: 'Huurtoeslag', label: 'Koszty wynajmu mieszkania', text: 'Wsparcie w opłacaniu czynszu. Sprawdź zasady dotyczące mieszkania i gospodarstwa domowego.', icon: House, url: root+'huurtoeslag/huurtoeslag', tag: 'Mieszkanie' },
+  { name: 'Kindgebonden budget', label: 'Wsparcie dla rodziców', text: 'Dodatkowe wsparcie na koszty utrzymania dzieci. Sprawdź warunki w Dienst Toeslagen.', icon: Users, url: root+'kindgebonden-budget/kindgebonden-budget', tag: 'Rodzina' },
+  { name: 'Kinderopvangtoeslag', label: 'Opieka nad dzieckiem', text: 'Dopłata do kosztów opieki nad dzieckiem. Sprawdź warunki i zasady składania wniosku.', icon: Baby, url: root+'kinderopvangtoeslag/kinderopvangtoeslag', tag: 'Rodzina' },
+  { name: 'Kinderbijslag', label: 'Świadczenie na dzieci z SVB', text: 'Osobne świadczenie obsługiwane przez SVB. Wnioski i zmiany załatwisz w systemie tej instytucji.', icon: Users, url: 'https://www.svb.nl/nl/kinderbijslag/', tag: 'Rodzina' },
+];
+const guides = [
+  { title: 'Zmienił Ci się dochód?', text: 'Toeslagen są zaliczką opartą na przewidywanym dochodzie. Sprawdź, czy Twoje dane nadal odpowiadają obecnej sytuacji.', url: root+'check-pas-aan-en-door/check-pas-aan-en-door', source: 'Dienst Toeslagen', label: 'Dochód i zmiany' },
+  { title: 'Zacznij od oficjalnego wyliczenia', text: 'Chcesz sprawdzić możliwą wysokość dopłaty? Skorzystaj z kalkulatora Dienst Toeslagen i przeczytaj jego ograniczenia.', url: root+'toeslagen/content/hulpmiddel-proefberekening-toeslagen', source: 'Dienst Toeslagen', label: 'Praktyczny poradnik' },
+  { title: 'Kinderbijslag: gdzie zgłosić zmianę?', text: 'Sprawdź w SVB, które zmiany trzeba zgłaszać i jak przekazać je przez Mijn SVB. To osobny system od Mijn toeslagen.', url: 'https://www.svb.nl/nl/kinderbijslag/uw-zaken-regelen/wijzigingen-doorgeven', source: 'SVB', label: 'Sprawy rodzinne' },
+];
+export default function Index() {
+  const [query, setQuery] = useState('');
+  const filtered = benefits.filter(b => `${b.name} ${b.label} ${b.tag}`.toLocaleLowerCase('pl').includes(query.toLocaleLowerCase('pl')));
+  return <div className="portal">
+    <a className="skip-link" href="#main">Przejdź do treści</a>
+    <div className="topline"><div className="wrap">Informacje po polsku. Oficjalne źródła holenderskie.<span>Niezależny serwis ConnectDot</span></div></div>
+    <header className="portal-header wrap"><a className="brand" href="#"><span className="brand-mark">d<span>.</span></span><span>Dofinansowania<span className="brand-nl">.NL</span><small>Łatwiej odnaleźć się w Holandii</small></span></a><nav aria-label="Menu główne"><a href="#swiadczenia">Świadczenia</a><a href="#poradniki">Poradniki</a><a href="#aktualnosci">Aktualności</a></nav><a className="login-link" href="https://mijn.toeslagen.nl/" target="_blank" rel="noopener noreferrer">Mijn toeslagen <ArrowUpRight size={16}/></a></header>
+    <main id="main">
+      <section className="hero"><div className="wrap hero-grid"><div><div className="eyebrow"><span/> DLA POLAKÓW W HOLANDII</div><h1>Twoje sprawy.<br/>Jasne informacje.<br/><em>Mniej znaków zapytania.</em></h1><p>Świadczenia, dopłaty i sprawy urzędowe. Poznaj możliwości, sprawdź zasady u źródła i przejdź do właściwego urzędu.</p><div className="hero-actions"><a className="button primary" href="#swiadczenia">Znajdź świadczenie <ArrowRight size={18}/></a><a className="hero-secondary" href="#poradniki">Od czego zacząć? <ArrowUpRight size={17}/></a></div><div className="hero-note"><ShieldCheck size={17}/> Bez obietnic dopłat. Z odnośnikami do urzędów.</div></div><aside className="quick-card"><span className="card-kicker">WARTO SPRAWDZIĆ</span><div className="quick-icon"><CheckCircle2 size={32}/></div><h2>Coś się zmieniło?<br/>Sprawdź swoje dane.</h2><p>Nowa praca, inny dochód lub zmiana sytuacji rodzinnej? Sprawdź, czy trzeba zaktualizować dane dotyczące toeslagen.</p><a className="button dark" href="https://mijn.toeslagen.nl/" target="_blank" rel="noopener noreferrer">Przejdź do Mijn toeslagen <ArrowUpRight size={18}/></a><a className="source-link" href={guides[0].url} target="_blank" rel="noopener noreferrer">Wyjaśnienie Dienst Toeslagen ↗</a></aside></div></section>
+      <section className="section wrap" id="swiadczenia"><div className="section-heading"><div><div className="eyebrow muted">SPRAWDŹ SWOJE MOŻLIWOŚCI</div><h2>Jakiego wsparcia szukasz?</h2></div><label className="search"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Szukaj, np. mieszkanie" aria-label="Szukaj świadczenia"/></label></div><div className="benefit-grid">{filtered.map(b=><a className="benefit-card" key={b.name} href={b.url} target="_blank" rel="noopener noreferrer"><div className="card-top"><span className="benefit-icon"><b.icon size={25}/></span><span className="pill">{b.tag}</span></div><h3>{b.name}</h3><strong>{b.label}</strong><p>{b.text}</p><span className="card-link">Sprawdź w oficjalnym źródle <ArrowUpRight size={17}/></span></a>)}</div>{!filtered.length&&<p role="status">Brak wyników. Spróbuj hasła „rodzina”, „zdrowie” lub „mieszkanie”.</p>}<p className="section-note">Warunki i wysokość wsparcia zależą od Twojej sytuacji. O prawie do świadczenia decyduje właściwa instytucja.</p></section>
+      <section className="guide-section" id="poradniki"><div className="wrap section"><div className="section-heading"><div><div className="eyebrow muted">KONKRETNIE, KROK PO KROKU</div><h2>Przydatne na co dzień</h2></div><BookOpen size={28}/></div><div className="guide-grid">{guides.map((g,i)=><article className="guide-card" key={g.title}><span className="guide-number">0{i+1}</span><span className="guide-label">{g.label}</span><h3>{g.title}</h3><p>{g.text}</p><a href={g.url} target="_blank" rel="noopener noreferrer">Czytaj w {g.source} <ArrowUpRight size={16}/></a></article>)}</div></div></section>
+      <NewsSection />
+    </main><footer><div className="wrap footer-grid"><div className="footer-brand">Dofinansowania.NL<small>Projekt ConnectDot</small></div><p>Niezależny serwis informacyjny po polsku. Nie jesteśmy urzędem ani częścią Belastingdienst, Dienst Toeslagen lub SVB. Nie przyjmujemy wniosków ani danych logowania DigiD. Materiały nie zastępują indywidualnej porady.</p><a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/toeslagen/toeslagen" target="_blank" rel="noopener noreferrer">Oficjalny portal Toeslagen <ArrowUpRight size={15}/></a></div></footer>
+  </div>;
+}
